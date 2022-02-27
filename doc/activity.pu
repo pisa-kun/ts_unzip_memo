@@ -1,0 +1,19 @@
+@startuml
+start
+:ファイルパスを入力;
+if(拡張子の確認) then (.zipでない)
+    stop
+' else(hoge)
+'     :aaa;
+endif
+:tmpフォルダにコピー;
+:zipファイルを展開;
+:展開先ファイルの情報を表示;
+note right
+    ファイル名
+    サイズ
+    著者
+    更新日
+end note
+stop
+@enduml
