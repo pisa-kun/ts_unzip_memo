@@ -45,26 +45,26 @@ const main = () => {
     }
 
     const destpath = path.join(rootpath, zipdir, tarname);
+
+    compressing.zip.uncompress(abpath, destpath)
+    .then(()=>{
+        console.log(`-----${abpath} の中身-----`);
+        getFileList(destpath).forEach(fname => {
+            console.log(fname);
+            fs.unlinkSync(path.join(destpath, fname));
+        });
+        console.log(`----------`);
+        // 後始末。ディレクトリの削除
+        fs.rmdir(destpath, (err) => {
+            if(err) throw err;
     
-    // todo: unzipは非同期っぽいので、zip解凍後に次のstepへ
-    unzip(abpath, destpath);
-
-    // for(var fname in getFileList(destpath)){
-    //     console.log(fname);
-    // }
-    // ファイルプロパティを表示してファイルを削除
-    console.log(`-----${abpath} の中身-----`);
-    getFileList(destpath).forEach(fname => {
-        console.log(fname);
-        fs.unlinkSync(path.join(destpath, fname));
-    });
-    console.log(`----------`);
-    // 後始末。ディレクトリの削除
-    fs.rmdir(destpath, (err) => {
-        if(err) throw err;
-
-        console.log('ディレクトリを削除。');
-    });
+            console.log('ディレクトリを削除。');
+        });
+    })
+    .catch((e) => {
+        console.log(e);
+        return e;
+    })
 }
 
 main();
