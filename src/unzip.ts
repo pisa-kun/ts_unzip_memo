@@ -1,16 +1,7 @@
 import * as compressing from "compressing";
 import path from 'path';
 import fs from 'fs';
-
-function unzip(filepath: string, destdir: string){
-    compressing.zip.uncompress(filepath, destdir)
-    .then(()=>{
-        return 0;
-    })
-    .catch((e) => {
-        return e;
-    })
-}
+import { mainModule } from "process";
 
 function getFileList(dirPath:string):string[] {
     
@@ -29,7 +20,7 @@ const zipname: string = "package.zip";
 const zipdir: string = "zip";
 const tarname: string = "packages";
 
-const main = () => {
+async function main() {
     // // カレントdir nameを返す
     // console.log(__dirname);
     // // 1階層上のdir nameを返す
@@ -46,25 +37,19 @@ const main = () => {
 
     const destpath = path.join(rootpath, zipdir, tarname);
 
-    compressing.zip.uncompress(abpath, destpath)
-    .then(()=>{
-        console.log(`-----${abpath} の中身-----`);
-        getFileList(destpath).forEach(fname => {
-            console.log(fname);
-            fs.unlinkSync(path.join(destpath, fname));
-        });
-        console.log(`----------`);
-        // 後始末。ディレクトリの削除
-        fs.rmdir(destpath, (err) => {
-            if(err) throw err;
-    
-            console.log('ディレクトリを削除。');
-        });
-    })
-    .catch((e) => {
-        console.log(e);
-        return e;
-    })
+    await compressing.zip.uncompress(abpath, destpath).then(()=> console.log("zip解凍完了"));
+    console.log(`-----${abpath} の中身-----`);
+    getFileList(destpath).forEach(fname => {
+        console.log(fname);
+        fs.unlinkSync(path.join(destpath, fname));
+    });
+    console.log(`----------`);
+    // 後始末。ディレクトリの削除
+    fs.rmdir(destpath, (err) => {
+        if(err) throw err;
+
+        console.log('ディレクトリを削除。');
+    });
 }
 
 main();
